@@ -1,98 +1,245 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+import { CustomInput } from '@/components/CustomInput';
+import { PrimaryButton } from '@/components/PrimaryButton';
+import { ThemeSwitch } from '@/components/ThemeSwitch';
+import { useThemeContext } from '@/context/ThemeContext';
 
 export default function HomeScreen() {
+  const { colors, theme } = useThemeContext();
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <SafeAreaView
+      style={[
+        styles.safeArea,
+        { backgroundColor: colors.background },
+      ]}
+    >
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <View
+            style={[
+              styles.logo,
+              { backgroundColor: colors.primary },
+            ]}
+          >
+            <Text style={styles.logoText}>M</Text>
+          </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+          <View style={styles.headerText}>
+            <Text
+              style={[
+                styles.title,
+                { color: colors.text },
+              ]}
+            >
+              MyProfile
+            </Text>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
+            <Text
+              style={[
+                styles.subtitle,
+                { color: colors.textSecondary },
+              ]}
+            >
+              Seu perfil, do seu jeito.
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.welcome}>
+          <Text
+            style={[
+              styles.welcomeTitle,
+              { color: colors.text },
+            ]}
+          >
+            Bem-vindo 👋
+          </Text>
+
+          <Text
+            style={[
+              styles.welcomeText,
+              { color: colors.textSecondary },
+            ]}
+          >
+            Gerencie seus dados e personalize
+            sua experiência.
+          </Text>
+        </View>
+
+        <View
+          style={[
+            styles.card,
+            {
+              backgroundColor: colors.backgroundElement,
+              borderColor: colors.border,
+            },
+          ]}
+        >
+          <Text
+            style={[
+              styles.cardTitle,
+              { color: colors.text },
+            ]}
+          >
+            Prévia do perfil
+          </Text>
+
+          <Text
+            style={[
+              styles.cardDescription,
+              { color: colors.textSecondary },
+            ]}
+          >
+            Este componente será utilizado
+            posteriormente na tela de perfil.
+          </Text>
+
+          <CustomInput
+            label="Nome"
+            placeholder="Digite seu nome"
           />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+          <CustomInput
+            label="E-mail"
+            placeholder="seuemail@email.com"
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+
+          <PrimaryButton
+            title="Salvar alterações"
+            onPress={() => {}}
+          />
+        </View>
+
+        <View style={styles.themeSection}>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: colors.text },
+            ]}
+          >
+            Personalização
+          </Text>
+
+          <Text
+            style={[
+              styles.sectionDescription,
+              { color: colors.textSecondary },
+            ]}
+          >
+            Tema atual: {theme === 'dark' ? 'Dark' : 'Light'}
+          </Text>
+
+          <ThemeSwitch />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
   safeArea: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
   },
-  heroSection: {
+
+  content: {
+    padding: 24,
+    gap: 24,
+  },
+
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    marginTop: 16,
+  },
+
+  logo: {
+    width: 52,
+    height: 52,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+
+  logoText: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    fontWeight: '800',
+  },
+
+  headerText: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
   },
+
   title: {
-    textAlign: 'center',
+    fontSize: 26,
+    fontWeight: '800',
   },
-  code: {
-    textTransform: 'uppercase',
+
+  subtitle: {
+    fontSize: 14,
+    marginTop: 2,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+
+  welcome: {
+    marginTop: 12,
+    gap: 6,
+  },
+
+  welcomeTitle: {
+    fontSize: 28,
+    fontWeight: '800',
+  },
+
+  welcomeText: {
+    fontSize: 15,
+    lineHeight: 22,
+  },
+
+  card: {
+    borderRadius: 20,
+    borderWidth: 1,
+    padding: 20,
+  },
+
+  cardTitle: {
+    fontSize: 19,
+    fontWeight: '700',
+    marginBottom: 6,
+  },
+
+  cardDescription: {
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 20,
+  },
+
+  themeSection: {
+    gap: 8,
+    marginBottom: 20,
+  },
+
+  sectionTitle: {
+    fontSize: 19,
+    fontWeight: '700',
+  },
+
+  sectionDescription: {
+    fontSize: 14,
+    marginBottom: 8,
   },
 });
