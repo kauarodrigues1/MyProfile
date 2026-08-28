@@ -30,20 +30,22 @@ export function CustomInput({
 
       <TextInput
         {...props}
-        placeholderTextColor={colors.textMuted}
+        placeholderTextColor={colors.textSecondary}
         style={[
           styles.input,
           {
             backgroundColor: colors.backgroundElement,
             color: colors.text,
-            borderColor: error ? colors.error : colors.border,
+            borderColor: error
+              ? '#D32F2F'
+              : colors.textSecondary,
           },
           style,
         ]}
       />
 
       {error ? (
-        <Text style={[styles.error, { color: colors.error }]}>
+        <Text style={styles.error}>
           {error}
         </Text>
       ) : null}
@@ -51,13 +53,15 @@ export function CustomInput({
   );
 }
 
+export default CustomInput;
+
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
   },
 
   label: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
     marginBottom: 8,
   },
@@ -73,5 +77,6 @@ const styles = StyleSheet.create({
   error: {
     marginTop: 6,
     fontSize: 12,
+    color: '#D32F2F',
   },
 });
