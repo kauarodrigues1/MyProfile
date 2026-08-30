@@ -22,6 +22,9 @@ const TEST_USER: User = {
   bio: '',
 };
 
+const CREATE_COLOR = '#16A34A';
+const CLEAR_COLOR = '#DC2626';
+
 export default function ProfileRouteDevHarness() {
   const [reloadKey, setReloadKey] = useState(0);
 
@@ -40,12 +43,30 @@ export default function ProfileRouteDevHarness() {
   return (
     <View style={styles.container}>
       <View style={styles.devBar}>
-        <Pressable style={styles.devButton} onPress={handleSeed}>
-          <Text style={styles.devButtonText}>Criar usuario</Text>
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            styles.createButton,
+            pressed && styles.pressed,
+          ]}
+          onPress={handleSeed}
+          accessibilityRole="button"
+          accessibilityLabel="Criar usuario de teste">
+          <Text style={styles.createIcon}>+</Text>
+          <Text style={styles.createText}>Criar usuário de teste</Text>
         </Pressable>
 
-        <Pressable style={styles.devButton} onPress={handleClear}>
-          <Text style={styles.devButtonText}>Limpar</Text>
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            styles.clearButton,
+            pressed && styles.pressed,
+          ]}
+          onPress={handleClear}
+          accessibilityRole="button"
+          accessibilityLabel="Limpar dados salvos">
+          <Text style={styles.clearIcon}>×</Text>
+          <Text style={styles.clearText}>Limpar dados</Text>
         </Pressable>
       </View>
 
@@ -60,22 +81,51 @@ const styles = StyleSheet.create({
   },
   devBar: {
     flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingTop: Platform.select({ web: 100, default: 48 }),
+    paddingBottom: 12,
+  },
+  button: {
+    flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    paddingHorizontal: 12,
-    paddingTop: Platform.select({ web: 100, default: 48 }),
-    paddingBottom: 8,
-    backgroundColor: 'transparent',
+    height: 44,
+    paddingHorizontal: 18,
+    borderRadius: 22,
   },
-  devButton: {
-    backgroundColor: 'rgba(127,127,127,0.18)',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 6,
+  pressed: {
+    opacity: 0.75,
+    transform: [{ scale: 0.97 }],
   },
-  devButtonText: {
-    color: '#8A8A8E',
-    fontSize: 11,
-    fontWeight: '600',
+  createButton: {
+    backgroundColor: CREATE_COLOR,
+  },
+  createIcon: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '700',
+    lineHeight: 22,
+  },
+  createText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  clearButton: {
+    borderWidth: 2,
+    borderColor: CLEAR_COLOR,
+  },
+  clearIcon: {
+    color: CLEAR_COLOR,
+    fontSize: 20,
+    fontWeight: '700',
+    lineHeight: 22,
+  },
+  clearText: {
+    color: CLEAR_COLOR,
+    fontSize: 15,
+    fontWeight: '700',
   },
 });
