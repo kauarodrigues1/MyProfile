@@ -1,7 +1,3 @@
-// ==========================================================================
-// ARQUIVO TEMPORARIO DE TESTE - NAO COMMITAR
-// Remover com: rm src/app/profile.tsx
-// ==========================================================================
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
