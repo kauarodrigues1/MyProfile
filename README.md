@@ -1,56 +1,157 @@
-# Welcome to your Expo app 👋
+# MyProfile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicação mobile desenvolvida em React Native com Expo para gerenciamento e personalização de perfil de usuário.
 
-## Get started
+## 📱 Sobre o projeto
 
-1. Install dependencies
+O MyProfile é uma aplicação desenvolvida para permitir que usuários gerenciem suas informações pessoais e personalizem sua experiência dentro do aplicativo.
 
-   ```bash
-   npm install
-   ```
+O projeto foi desenvolvido de forma colaborativa por uma equipe de 5 integrantes, utilizando Git e GitHub para controle de versão, organização das branches e integração das funcionalidades.
 
-2. Start the app
+## 🚀 Tecnologias
 
-   ```bash
-   npx expo start
-   ```
+- React Native
+- Expo
+- TypeScript
+- Expo Router
+- AsyncStorage
+- Git
+- GitHub
 
-In the output, you'll find options to open the app in a
+## 📦 Versão
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Expo SDK 57
+- React Native
+- TypeScript
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## ⚙️ Instalação
 
-## Get a fresh project
-
-When you're ready, run:
+### 1. Clone o repositório
 
 ```bash
-npm run reset-project
-```
+git clone https://github.com/kauarodrigues1/MyProfile.git
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. Acesse a pasta do projeto
+cd MyProfile
+3. Instale as dependências
+npm install
+4. Inicie o projeto
+npx expo start
+5. Executar no navegador
 
-### Other setup steps
+Com o Expo iniciado, pressione:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+W
 
-## Learn more
+no terminal para abrir a aplicação no navegador.
 
-To learn more about developing your project with Expo, look at the following resources:
+✨ Funcionalidades
+Cadastro de usuário
+Gerenciamento de perfil
+Personalização da interface
+Tema Light
+Tema Dark
+Alternância entre temas
+Persistência do tema utilizando AsyncStorage
+Recuperação automática do tema ao abrir o aplicativo
+Componentes visuais reutilizáveis
+Validação de campos
+Interface responsiva
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+🎨 Tema e Interface
 
-## Join the community
+A aplicação possui suporte aos modos Light e Dark.
 
-Join our community of developers creating universal apps.
+A preferência selecionada pelo usuário é armazenada utilizando AsyncStorage e recuperada automaticamente quando o aplicativo é iniciado.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Foram desenvolvidos componentes reutilizáveis para manter a padronização visual da aplicação:
+
+CustomInput
+PrimaryButton
+ThemeSwitch
+
+Também foram padronizados:
+
+Cores
+Espaçamentos
+Tipografia
+Botões
+Campos de entrada
+Elementos da interface
+Responsividade
+
+💾 Armazenamento
+
+O projeto utiliza AsyncStorage para armazenamento local de informações, incluindo a preferência de tema do usuário.
+
+📁 Estrutura do projeto
+MyProfile/
+├── assets/
+├── scripts/
+├── src/
+│   ├── app/
+│   ├── components/
+│   ├── constants/
+│   ├── context/
+│   ├── hooks/
+│   ├── screens/
+│   ├── services/
+│   └── types/
+├── .gitignore
+├── app.json
+├── package.json
+├── README.md
+└── tsconfig.json
+
+🌿 Organização das Branches
+
+O desenvolvimento foi organizado utilizando branches independentes para cada funcionalidade.
+
+main
+├── cadastro
+├── tema
+├── login
+├── perfil
+└── readme
+
+Cada integrante desenvolve sua funcionalidade em uma branch específica e, posteriormente, as alterações são integradas ao projeto principal.
+
+👥 Integrantes
+Enzo Galhardo 	RM 561001
+Felipe Santos Marceli	RM 560456
+Kauã Rodrigues de Souza	RM 559335
+Kauan Diogo	RM 560727
+Leonardo Luiz Jardim Queijo	RM 559842
+
+👤 Responsabilidades
+Kauã Rodrigues de Souza
+Desenvolvimento da funcionalidade de Login.
+
+Kauan Diogo
+Desenvolvimento da funcionalidade de Cadastro.
+
+Enzo Galhardo
+Desenvolvimento da funcionalidade de Perfil.
+
+Felipe Santos Marceli
+Desenvolvimento das demais funcionalidades da aplicação.
+
+Leonardo Luiz Jardim Queijo
+Desenvolvimento do Tema Light e Dark.
+Implementação do Switch de tema.
+Persistência do tema com AsyncStorage.
+Criação de componentes visuais reutilizáveis.
+Padronização da interface.
+Revisão de responsividade.
+Integração final.
+Documentação do projeto.
+
+🧪 Validação
+
+Para verificar se o projeto está compilando corretamente:
+
+npx tsc --noEmit
+
+Para iniciar a aplicação:
+
+npx expo start
