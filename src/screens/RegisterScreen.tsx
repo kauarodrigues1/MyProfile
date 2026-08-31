@@ -1,38 +1,32 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
 } from 'react-native';
-import { CustomInput } from '../components/CustomInput';
 
-// Tipagem básica para a navegação (caso esteja usando React Navigation)
-interface RegisterScreenProps {
-  navigation: any; 
-}
+import { CustomInput } from '@/components/CustomInput';
 
-export function RegisterScreen({ navigation }: RegisterScreenProps) {
-  // Estados dos campos do formulário
+export function RegisterScreen() {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  // Estados de controle
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  // Função de validação
   const validate = () => {
     let isValid = true;
-    let newErrors: { [key: string]: string } = {};
+    const newErrors: { [key: string]: string } = {};
 
     if (!name.trim()) {
       newErrors.name = 'Informe seu nome.';
@@ -48,8 +42,8 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
       newErrors.email = 'Informe seu e-mail.';
       isValid = false;
     } else {
-      // Regex simples para validar formato de e-mail
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
       if (!emailRegex.test(email)) {
         newErrors.email = 'Informe um e-mail válido.';
         isValid = false;
@@ -62,7 +56,8 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
     }
 
     if (!confirmPassword) {
-      newErrors.confirmPassword = 'A confirmação de senha é obrigatória.';
+      newErrors.confirmPassword =
+        'A confirmação de senha é obrigatória.';
       isValid = false;
     } else if (password !== confirmPassword) {
       newErrors.confirmPassword = 'As senhas não são iguais.';
@@ -70,53 +65,59 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
     }
 
     setErrors(newErrors);
+
     return isValid;
   };
 
-  // Função disparada ao clicar no botão Cadastrar
   const handleRegister = async () => {
-    if (!validate()) return;
+  if (!validate()) {
+    return;
+  }
 
-    setIsLoading(true);
+  setIsLoading(true);
 
-    try {
-      // Cria o objeto do usuário
-      const newUser = {
-        id: Date.now().toString(),
-        name,
-        username,
-        email,
-        password,
-        phone: '',
-        city: '',
-        bio: '',
-      };
+  try {
+    const newUser = {
+      id: Date.now().toString(),
+      name: name.trim(),
+      username: username.trim(),
+      email: email.trim(),
+      password,
+      phone: '',
+      city: '',
+      bio: '',
+    };
 
-      // Simula um tempo de rede
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    await AsyncStorage.setItem(
+      '@myprofile:user',
+      JSON.stringify(newUser)
+    );
 
-      // Salva no AsyncStorage
-      await AsyncStorage.setItem('@myprofile:user', JSON.stringify(newUser));
+    console.log('Cadastro realizado com sucesso:', newUser);
 
-      Alert.alert('Sucesso', 'Cadastro realizado com sucesso!', [
-        { text: 'OK', onPress: () => navigation.navigate('Login') }
-      ]);
-      
-    } catch (error) {
-      Alert.alert('Erro', 'Não foi possível salvar o cadastro. Tente novamente.');
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    // Vai diretamente para o MyProfile
+    router.replace('/(tabs)');
+  } catch (error) {
+    console.error('Erro ao cadastrar:', error);
 
-  // VEJA AQUI: O KeyboardAvoidingView agora envolve o ScrollView corretamente
+    Alert.alert(
+      'Erro',
+      'Não foi possível realizar o cadastro. Tente novamente.'
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
+
   return (
-    <KeyboardAvoidingView 
-      style={{ flex: 1 }} 
+    <KeyboardAvoidingView
+      style={styles.keyboard}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
         <Text style={styles.title}>Crie sua conta</Text>
 
         <CustomInput
@@ -164,24 +165,26 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
           secureTextEntry
         />
 
-        <TouchableOpacity 
-          style={styles.button} 
+        <TouchableOpacity
+          style={styles.button}
           onPress={handleRegister}
           disabled={isLoading}
         >
           {isLoading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color="#FFFFFF" />
           ) : (
             <Text style={styles.buttonText}>Cadastrar</Text>
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={styles.linkButton} 
-          onPress={() => navigation.navigate('Login')}
+        <TouchableOpacity
+          style={styles.linkButton}
+          onPress={() => router.replace('/(tabs)')}
           disabled={isLoading}
         >
-          <Text style={styles.linkText}>Já tem cadastro? Entrar</Text>
+          <Text style={styles.linkText}>
+            Já tem cadastro? Voltar
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -189,37 +192,46 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
 }
 
 const styles = StyleSheet.create({
+  keyboard: {
+    flex: 1,
+  },
+
   container: {
     flexGrow: 1,
     padding: 24,
     backgroundColor: '#f5f5f5',
     justifyContent: 'center',
   },
+
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 24,
     textAlign: 'center',
-    color: '#333',
+    color: '#333333',
   },
+
   button: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#FF6B00',
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 16,
   },
+
   buttonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
   },
+
   linkButton: {
     marginTop: 24,
     alignItems: 'center',
   },
+
   linkText: {
-    color: '#007BFF',
+    color: '#FF6B00',
     fontSize: 16,
   },
 });
