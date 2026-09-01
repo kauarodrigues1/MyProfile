@@ -110,9 +110,16 @@ export function ProfileScreen() {
     return (
       <View style={styles.profileContent}>
         <View>
-          <ThemedText style={styles.title}>
+          <Text
+            style={[
+              styles.title,
+              {
+                color: colors.text,
+              },
+            ]}
+          >
             Perfil
-          </ThemedText>
+          </Text>
 
           <ThemedText
             type="small"
@@ -121,7 +128,7 @@ export function ProfileScreen() {
           >
             Visualize e gerencie suas informações pessoais.
           </ThemedText>
-        </View>
+      </View>
 
         <ProfileCard
           user={user}
