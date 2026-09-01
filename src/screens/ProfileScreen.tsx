@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -7,16 +8,15 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { ProfileCard } from '@/components/ProfileCard';
-import { ThemedText } from '@/components/themed-text';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { useThemeContext } from '@/context/ThemeContext';
-import { EditProfileScreen } from '@/screens/EditProfileScreen';
-import { getUser } from '@/services/storageService';
-import { User } from '@/types/user';
+import { ProfileCard } from "@/components/ProfileCard";
+import { BottomTabInset, MaxContentWidth, Spacing } from "@/constants/theme";
+import { useThemeContext } from "@/context/ThemeContext";
+import { EditProfileScreen } from "@/screens/EditProfileScreen";
+import { getUser } from "@/services/storageService";
+import { User } from "@/types/user";
 
 export function ProfileScreen() {
   const { colors } = useThemeContext();
@@ -32,17 +32,24 @@ export function ProfileScreen() {
 
     try {
       const storedUser = await getUser();
+
       setUser(storedUser);
     } catch {
-      setError('Não foi possível carregar o perfil.');
+      setError("Não foi possível carregar o perfil.");
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    loadUser();
-  }, [loadUser]);
+  /*
+   * Recarrega os dados sempre que
+   * a aba Perfil recebe foco.
+   */
+  useFocusEffect(
+    useCallback(() => {
+      loadUser();
+    }, [loadUser]),
+  );
 
   const handleSaved = (updatedUser: User) => {
     setUser(updatedUser);
@@ -55,9 +62,16 @@ export function ProfileScreen() {
         <View style={styles.centered}>
           <ActivityIndicator color={colors.primary} />
 
-          <ThemedText type="small" themeColor="textSecondary">
+          <Text
+            style={[
+              styles.smallText,
+              {
+                color: colors.textSecondary,
+              },
+            ]}
+          >
             Carregando perfil...
-          </ThemedText>
+          </Text>
         </View>
       );
     }
@@ -65,9 +79,16 @@ export function ProfileScreen() {
     if (error) {
       return (
         <View style={styles.centered}>
-          <ThemedText style={styles.centerText}>
+          <Text
+            style={[
+              styles.centerText,
+              {
+                color: colors.text,
+              },
+            ]}
+          >
             {error}
-          </ThemedText>
+          </Text>
 
           <Pressable
             style={({ pressed }) => [
@@ -92,23 +113,36 @@ export function ProfileScreen() {
     if (!user) {
       return (
         <View style={styles.centered}>
-          <ThemedText style={styles.centerText}>
+          <Text
+            style={[
+              styles.centerText,
+              {
+                color: colors.text,
+              },
+            ]}
+          >
             Nenhum perfil encontrado.
-          </ThemedText>
+          </Text>
 
-          <ThemedText
-            type="small"
-            themeColor="textSecondary"
-            style={styles.centerText}
+          <Text
+            style={[
+              styles.smallText,
+              styles.centerText,
+              {
+                color: colors.textSecondary,
+              },
+            ]}
           >
             Faça o cadastro para visualizar seus dados aqui.
-          </ThemedText>
+          </Text>
         </View>
       );
     }
 
     return (
       <View style={styles.profileContent}>
+        {/* TÍTULO */}
+
         <View>
           <Text
             style={[
@@ -121,18 +155,23 @@ export function ProfileScreen() {
             Perfil
           </Text>
 
-          <ThemedText
-            type="small"
-            themeColor="textSecondary"
-            style={styles.subtitle}
+          <Text
+            style={[
+              styles.subtitle,
+              {
+                color: colors.textSecondary,
+              },
+            ]}
           >
             Visualize e gerencie suas informações pessoais.
-          </ThemedText>
-      </View>
+          </Text>
+        </View>
 
-        <ProfileCard
-          user={user}
-        />
+        {/* PERFIL */}
+
+        <ProfileCard user={user} />
+
+        {/* EDITAR */}
 
         <Pressable
           style={({ pressed }) => [
@@ -196,8 +235,8 @@ const styles = StyleSheet.create({
 
   contentContainer: {
     flexGrow: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     paddingHorizontal: Spacing.four,
     paddingTop: Spacing.five,
     paddingBottom: BottomTabInset + Spacing.four,
@@ -214,7 +253,7 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: 30,
-    fontWeight: '800',
+    fontWeight: "800",
     letterSpacing: -0.8,
   },
 
@@ -223,29 +262,33 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
+  smallText: {
+    fontSize: 14,
+  },
+
   centered: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     gap: Spacing.three,
   },
 
   centerText: {
-    textAlign: 'center',
+    textAlign: "center",
   },
 
   primaryButton: {
     height: 52,
     borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'stretch',
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "stretch",
     paddingHorizontal: Spacing.four,
   },
 
   primaryButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });

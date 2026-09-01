@@ -102,7 +102,7 @@ export function RegisterScreen() {
         newUser
       );
 
-      router.replace('/(tabs)');
+      router.replace('/home');
     } catch (error) {
       console.error('Erro ao cadastrar:', error);
 

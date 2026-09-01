@@ -39,7 +39,7 @@ export function LoginScreen() {
     try {
       await login(username.trim(), password);
 
-      router.replace('/(tabs)');
+      router.replace('/home');
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);

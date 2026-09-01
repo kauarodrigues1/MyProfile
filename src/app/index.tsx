@@ -1,11 +1,60 @@
-import { Redirect } from 'expo-router';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { Redirect, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  View,
+} from 'react-native';
 
-import { useAuth } from '../hooks/useAuth';
 import { LoginScreen } from '../screens/LoginScreen';
+import { getAuthenticatedUser } from '../services/authService';
 
 export default function Index() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const [isAuthenticated, setIsAuthenticated] =
+    useState(false);
+
+  const [isLoading, setIsLoading] =
+    useState(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+
+      const checkSession = async () => {
+        try {
+          setIsLoading(true);
+
+          const user =
+            await getAuthenticatedUser();
+
+          if (isActive) {
+            setIsAuthenticated(
+              user !== null
+            );
+          }
+        } catch (error) {
+          console.error(
+            'Erro ao verificar sessão:',
+            error
+          );
+
+          if (isActive) {
+            setIsAuthenticated(false);
+          }
+        } finally {
+          if (isActive) {
+            setIsLoading(false);
+          }
+        }
+      };
+
+      checkSession();
+
+      return () => {
+        isActive = false;
+      };
+    }, [])
+  );
 
   if (isLoading) {
     return (
@@ -16,7 +65,7 @@ export default function Index() {
   }
 
   if (isAuthenticated) {
-    return <Redirect href="/(tabs)" />;
+    return <Redirect href="/home" />;
   }
 
   return <LoginScreen />;
