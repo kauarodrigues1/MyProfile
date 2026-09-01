@@ -1,5 +1,4 @@
-import React from 'react';
-import { StyleSheet, Switch, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useThemeContext } from '@/context/ThemeContext';
 
@@ -9,7 +8,8 @@ export function ThemeSwitch() {
   const isDark = theme === 'dark';
 
   return (
-    <View
+    <Pressable
+      onPress={toggleTheme}
       style={[
         styles.container,
         {
@@ -18,67 +18,52 @@ export function ThemeSwitch() {
         },
       ]}
     >
-      <View style={styles.info}>
-        <Text style={styles.icon}>{isDark ? '🌙' : '☀️'}</Text>
-
-        <View>
-          <Text style={[styles.title, { color: colors.text }]}>
-            Tema
-          </Text>
-
-          <Text
-            style={[
-              styles.subtitle,
-              { color: colors.textSecondary },
-            ]}
-          >
-            {isDark ? 'Modo escuro' : 'Modo claro'}
-          </Text>
-        </View>
+      <View
+        style={[
+          styles.option,
+          !isDark && {
+            backgroundColor: colors.primary,
+          },
+        ]}
+      >
+        <Text style={styles.icon}>☀</Text>
       </View>
 
-      <Switch
-        value={isDark}
-        onValueChange={toggleTheme}
-        trackColor={{
-          false: colors.border,
-          true: colors.primary,
-        }}
-        thumbColor="#FFFFFF"
-      />
-    </View>
+      <View
+        style={[
+          styles.option,
+          isDark && {
+            backgroundColor: colors.primary,
+          },
+        ]}
+      >
+        <Text style={styles.icon}>☾</Text>
+      </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    minHeight: 68,
+    height: 48,
+    width: 96,
+    borderRadius: 24,
     borderWidth: 1,
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    padding: 4,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
 
-  info: {
-    flexDirection: 'row',
+  option: {
+    flex: 1,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
-    gap: 12,
+    justifyContent: 'center',
   },
 
   icon: {
-    fontSize: 24,
-  },
-
-  title: {
-    fontSize: 15,
-    fontWeight: '700',
-  },
-
-  subtitle: {
-    fontSize: 13,
-    marginTop: 2,
+    fontSize: 20,
+    color: '#FFFFFF',
   },
 });

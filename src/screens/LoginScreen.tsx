@@ -1,155 +1,225 @@
-import { router } from "expo-router";
-import { useState } from "react";
+import { router } from 'expo-router';
+import { useState } from 'react';
 import {
-    ActivityIndicator,
-    Pressable,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
-} from "react-native";
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
-import { useAuth } from "../hooks/useAuth";
+import { CustomInput } from '@/components/CustomInput';
+import { PrimaryButton } from '@/components/PrimaryButton';
+import { useThemeContext } from '@/context/ThemeContext';
+import { useAuth } from '@/hooks/useAuth';
 
 export function LoginScreen() {
   const { login, isLoading } = useAuth();
+  const { colors } = useThemeContext();
 
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [error, setError] = useState<string>("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleLogin = async (): Promise<void> => {
-    setError("");
+    setError('');
 
     if (!username.trim()) {
-      setError("Informe seu nome de usuário.");
+      setError('Informe seu nome de usuário.');
       return;
     }
 
     if (!password.trim()) {
-      setError("Informe sua senha.");
+      setError('Informe sua senha.');
       return;
     }
 
     try {
       await login(username.trim(), password);
 
-      router.replace("/profile");
+      router.replace('/(tabs)');
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError("Não foi possível realizar o login.");
+        setError('Não foi possível realizar o login.');
       }
     }
   };
 
   const handleRegister = (): void => {
-    console.log("Rota de cadastro ainda não disponível.");
+    router.push('/register');
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>MyProfile</Text>
-
-      <Text style={styles.label}>Nome de usuário</Text>
-
-      <TextInput
-        style={styles.input}
-        value={username}
-        onChangeText={setUsername}
-        placeholder="Digite seu usuário"
-        autoCapitalize="none"
-        editable={!isLoading}
-      />
-
-      <Text style={styles.label}>Senha</Text>
-
-      <TextInput
-        style={styles.input}
-        value={password}
-        onChangeText={setPassword}
-        placeholder="Digite sua senha"
-        secureTextEntry
-        editable={!isLoading}
-      />
-
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-
-      <Pressable
-        style={styles.button}
-        onPress={handleLogin}
-        disabled={isLoading}
+    <KeyboardAvoidingView
+      style={[
+        styles.keyboard,
+        { backgroundColor: colors.background },
+      ]}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        {isLoading ? (
-          <ActivityIndicator />
-        ) : (
-          <Text style={styles.buttonText}>Entrar</Text>
-        )}
-      </Pressable>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text
+              style={[
+                styles.title,
+                { color: colors.text },
+              ]}
+            >
+              MyProfile
+            </Text>
 
-      <Text style={styles.registerText}>Ainda não possui cadastro?</Text>
+            <Text
+              style={[
+                styles.subtitle,
+                { color: colors.textSecondary },
+              ]}
+            >
+              Entre na sua conta para continuar
+            </Text>
+          </View>
 
-      <Pressable onPress={handleRegister} disabled={isLoading}>
-        <Text style={styles.registerButton}>Cadastrar</Text>
-      </Pressable>
-    </View>
+          <View style={styles.form}>
+            <CustomInput
+              label="Nome de usuário"
+              placeholder="Digite seu usuário"
+              value={username}
+              onChangeText={setUsername}
+              autoCapitalize="none"
+              editable={!isLoading}
+            />
+
+            <CustomInput
+              label="Senha"
+              placeholder="Digite sua senha"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              editable={!isLoading}
+            />
+
+            {error ? (
+              <Text
+                style={[
+                  styles.error,
+                  { color: colors.error },
+                ]}
+              >
+                {error}
+              </Text>
+            ) : null}
+
+            <PrimaryButton
+              title="Entrar"
+              onPress={handleLogin}
+              loading={isLoading}
+              disabled={isLoading}
+            />
+          </View>
+
+          <View style={styles.registerArea}>
+            <Text
+              style={[
+                styles.registerText,
+                { color: colors.textSecondary },
+              ]}
+            >
+              Ainda não possui cadastro?
+            </Text>
+
+            <Text
+              style={[
+                styles.registerButton,
+                { color: colors.primary },
+              ]}
+              onPress={isLoading ? undefined : handleRegister}
+            >
+              Cadastrar
+            </Text>
+          </View>
+
+          {isLoading && (
+            <ActivityIndicator
+              size="small"
+              color={colors.primary}
+              style={styles.loading}
+            />
+          )}
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  keyboard: {
     flex: 1,
-    justifyContent: "center",
-    padding: 24,
-    gap: 12,
+  },
+
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 40,
+  },
+
+  container: {
+    width: '100%',
+    maxWidth: 480,
+    alignSelf: 'center',
+  },
+
+  header: {
+    alignItems: 'center',
+    marginBottom: 40,
   },
 
   title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 24,
+    fontSize: 36,
+    fontWeight: '800',
+    letterSpacing: -1,
+    marginBottom: 8,
   },
 
-  label: {
+  subtitle: {
     fontSize: 16,
-    fontWeight: "600",
+    textAlign: 'center',
   },
 
-  input: {
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    fontSize: 16,
+  form: {
+    gap: 4,
   },
 
   error: {
     fontSize: 14,
     marginTop: 4,
+    marginBottom: 8,
   },
 
-  button: {
-    padding: 14,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 12,
-  },
-
-  buttonText: {
-    fontSize: 16,
-    fontWeight: "bold",
+  registerArea: {
+    alignItems: 'center',
+    marginTop: 28,
   },
 
   registerText: {
-    textAlign: "center",
-    marginTop: 20,
+    fontSize: 14,
+    marginBottom: 8,
   },
 
   registerButton: {
-    textAlign: "center",
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: '700',
+  },
+
+  loading: {
+    marginTop: 16,
   },
 });

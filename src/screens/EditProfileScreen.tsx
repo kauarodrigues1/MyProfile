@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -9,12 +10,12 @@ import {
   Text,
   View,
 } from 'react-native';
+
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import CustomInput from '@/components/CustomInput';
-import { ThemedText } from '@/components/themed-text';
+import { useThemeContext } from '@/context/ThemeContext';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
 import { updateUser } from '@/services/storageService';
 import { User } from '@/types/user';
 
@@ -28,11 +29,12 @@ type FormErrors = Partial<Record<'name' | 'email', string>>;
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const ACCENT_COLOR = '#FF6B00';
-const ERROR_COLOR = '#DC2626';
-
-export function EditProfileScreen({ user, onCancel, onSaved }: EditProfileScreenProps) {
-  const colors = useTheme();
+export function EditProfileScreen({
+  user,
+  onCancel,
+  onSaved,
+}: EditProfileScreenProps) {
+  const { colors } = useThemeContext();
 
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);
@@ -89,132 +91,259 @@ export function EditProfileScreen({ user, onCancel, onSaved }: EditProfileScreen
 
       onSaved(updatedUser);
     } catch {
-      setSaveError('Não foi possível salvar as alterações. Tente novamente.');
+      setSaveError(
+        'Não foi possível salvar as alterações. Tente novamente.',
+      );
     } finally {
       setIsSaving(false);
     }
   };
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[
+        styles.safeArea,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <KeyboardAvoidingView
         style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
         <ScrollView
           contentContainerStyle={styles.contentContainer}
-          keyboardShouldPersistTaps="handled">
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.content}>
-            <ThemedText type="subtitle">Editar perfil</ThemedText>
+
+            {/* =====================================================
+                CABEÇALHO
+                ===================================================== */}
+
+            <View style={styles.header}>
+              <Text
+                style={[
+                  styles.title,
+                  {
+                    color: colors.text,
+                  },
+                ]}
+              >
+                Editar perfil
+              </Text>
+
+              <Text
+                style={[
+                  styles.subtitle,
+                  {
+                    color: colors.textSecondary,
+                  },
+                ]}
+              >
+                Atualize suas informações pessoais.
+              </Text>
+            </View>
+
+            {/* =====================================================
+                USUÁRIO
+                ===================================================== */}
 
             <View
               style={[
                 styles.usernameBox,
                 {
                   backgroundColor: colors.backgroundElement,
-                  borderColor: colors.backgroundSelected,
+                  borderColor: colors.border,
                 },
-              ]}>
-              <ThemedText type="small" themeColor="textSecondary">
+              ]}
+            >
+              <Text
+                style={[
+                  styles.usernameLabel,
+                  {
+                    color: colors.textSecondary,
+                  },
+                ]}
+              >
                 Usuário
-              </ThemedText>
-              <ThemedText>{user.username}</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
+              </Text>
+
+              <Text
+                style={[
+                  styles.username,
+                  {
+                    color: colors.text,
+                  },
+                ]}
+              >
+                @{user.username}
+              </Text>
+
+              <Text
+                style={[
+                  styles.usernameDescription,
+                  {
+                    color: colors.textSecondary,
+                  },
+                ]}
+              >
                 O nome de usuário não pode ser alterado.
-              </ThemedText>
+              </Text>
             </View>
 
-            <CustomInput
-              label="Nome completo"
-              placeholder="Digite seu nome"
-              value={name}
-              onChangeText={setName}
-              autoComplete="name"
-              textContentType="name"
-              error={errors.name}
-              editable={!isSaving}
-            />
+            {/* =====================================================
+                FORMULÁRIO
+                ===================================================== */}
 
-            <CustomInput
-              label="E-mail"
-              placeholder="Digite seu e-mail"
-              value={email}
-              onChangeText={setEmail}
-              autoComplete="email"
-              textContentType="emailAddress"
-              error={errors.email}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              editable={!isSaving}
-            />
+            <View style={styles.form}>
 
-            <CustomInput
-              label="Telefone"
-              placeholder="Digite seu telefone"
-              value={phone}
-              onChangeText={setPhone}
-              autoComplete="tel"
-              textContentType="telephoneNumber"
-              keyboardType="phone-pad"
-              editable={!isSaving}
-            />
+              <CustomInput
+                label="Nome completo"
+                placeholder="Digite seu nome"
+                value={name}
+                onChangeText={setName}
+                autoComplete="name"
+                textContentType="name"
+                error={errors.name}
+                editable={!isSaving}
+              />
 
-            <CustomInput
-              label="Cidade"
-              placeholder="Digite sua cidade"
-              value={city}
-              onChangeText={setCity}
-              autoComplete="postal-address-locality"
-              textContentType="addressCity"
-              editable={!isSaving}
-            />
+              <CustomInput
+                label="E-mail"
+                placeholder="Digite seu e-mail"
+                value={email}
+                onChangeText={setEmail}
+                autoComplete="email"
+                textContentType="emailAddress"
+                error={errors.email}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                editable={!isSaving}
+              />
 
-            <CustomInput
-              label="Biografia"
-              placeholder="Fale um pouco sobre você"
-              value={bio}
-              onChangeText={setBio}
-              multiline
-              numberOfLines={4}
-              editable={!isSaving}
-            />
+              <CustomInput
+                label="Telefone"
+                placeholder="Digite seu telefone"
+                value={phone}
+                onChangeText={setPhone}
+                autoComplete="tel"
+                textContentType="telephoneNumber"
+                keyboardType="phone-pad"
+                editable={!isSaving}
+              />
+
+              <CustomInput
+                label="Cidade"
+                placeholder="Digite sua cidade"
+                value={city}
+                onChangeText={setCity}
+                autoComplete="postal-address-locality"
+                textContentType="addressCity"
+                editable={!isSaving}
+              />
+
+              <CustomInput
+                label="Biografia"
+                placeholder="Fale um pouco sobre você"
+                value={bio}
+                onChangeText={setBio}
+                multiline
+                numberOfLines={4}
+                editable={!isSaving}
+              />
+
+            </View>
+
+            {/* =====================================================
+                ERRO AO SALVAR
+                ===================================================== */}
 
             {saveError ? (
-              <Text style={styles.saveError} accessibilityLiveRegion="polite">
+              <Text
+                style={[
+                  styles.saveError,
+                  {
+                    color: colors.error,
+                  },
+                ]}
+                accessibilityLiveRegion="polite"
+              >
                 {saveError}
               </Text>
             ) : null}
 
+            {/* =====================================================
+                SALVAR
+                ===================================================== */}
+
             <Pressable
               style={({ pressed }) => [
                 styles.primaryButton,
-                { opacity: isSaving ? 0.6 : pressed ? 0.85 : 1 },
+                {
+                  backgroundColor: colors.primary,
+                  opacity: isSaving
+                    ? 0.6
+                    : pressed
+                      ? 0.85
+                      : 1,
+                },
               ]}
               onPress={handleSave}
               disabled={isSaving}
               accessibilityRole="button"
-              accessibilityLabel="Salvar alteracoes do perfil"
-              accessibilityState={{ disabled: isSaving, busy: isSaving }}>
+              accessibilityLabel="Salvar alterações do perfil"
+              accessibilityState={{
+                disabled: isSaving,
+                busy: isSaving,
+              }}
+            >
               {isSaving ? (
-                <ActivityIndicator color="#ffffff" />
+                <ActivityIndicator color="#FFFFFF" />
               ) : (
-                <Text style={styles.primaryButtonText}>Salvar alterações</Text>
+                <Text style={styles.primaryButtonText}>
+                  Salvar alterações
+                </Text>
               )}
             </Pressable>
+
+            {/* =====================================================
+                CANCELAR
+                ===================================================== */}
 
             <Pressable
               style={({ pressed }) => [
                 styles.secondaryButton,
-                { opacity: isSaving ? 0.6 : pressed ? 0.7 : 1 },
+                {
+                  opacity: isSaving
+                    ? 0.5
+                    : pressed
+                      ? 0.7
+                      : 1,
+                },
               ]}
               onPress={onCancel}
               disabled={isSaving}
               accessibilityRole="button"
-              accessibilityLabel="Cancelar edicao e voltar ao perfil"
-              accessibilityState={{ disabled: isSaving }}>
-              <Text style={[styles.secondaryButtonText, { color: colors.textSecondary }]}>
+              accessibilityLabel="Cancelar edição e voltar ao perfil"
+              accessibilityState={{
+                disabled: isSaving,
+              }}
+            >
+              <Text
+                style={[
+                  styles.secondaryButtonText,
+                  {
+                    color: colors.textSecondary,
+                  },
+                ]}
+              >
                 Cancelar
               </Text>
             </Pressable>
+
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -226,50 +355,123 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
+
   flex: {
     flex: 1,
   },
+
   contentContainer: {
     flexGrow: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.four,
   },
+
   content: {
-    flex: 1,
+    width: '100%',
     maxWidth: MaxContentWidth,
-    gap: Spacing.three,
+    alignSelf: 'center',
   },
+
+  /* =====================================================
+     CABEÇALHO
+     ===================================================== */
+
+  header: {
+    marginBottom: 24,
+  },
+
+  title: {
+    fontSize: 30,
+    fontWeight: '800',
+    letterSpacing: -0.8,
+  },
+
+  subtitle: {
+    fontSize: 15,
+    marginTop: 6,
+  },
+
+  /* =====================================================
+     USUÁRIO
+     ===================================================== */
+
   usernameBox: {
-    borderRadius: Spacing.three,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: Spacing.three,
-    gap: Spacing.half,
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 20,
+    marginBottom: 24,
   },
+
+  usernameLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    marginBottom: 5,
+  },
+
+  username: {
+    fontSize: 17,
+    fontWeight: '700',
+    marginBottom: 5,
+  },
+
+  usernameDescription: {
+    fontSize: 13,
+    lineHeight: 19,
+  },
+
+  /* =====================================================
+     FORMULÁRIO
+     ===================================================== */
+
+  form: {
+    gap: 4,
+  },
+
+  /* =====================================================
+     ERRO
+     ===================================================== */
+
   saveError: {
-    color: ERROR_COLOR,
     fontSize: 14,
+    lineHeight: 20,
+    marginTop: 12,
   },
+
+  /* =====================================================
+     BOTÃO PRINCIPAL
+     ===================================================== */
+
   primaryButton: {
-    backgroundColor: ACCENT_COLOR,
     height: 52,
-    borderRadius: Spacing.three,
+    borderRadius: 14,
+
     alignItems: 'center',
     justifyContent: 'center',
+
+    marginTop: 20,
   },
+
   primaryButtonText: {
-    color: '#ffffff',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
   },
+
+  /* =====================================================
+     CANCELAR
+     ===================================================== */
+
   secondaryButton: {
     height: 48,
+
     alignItems: 'center',
     justifyContent: 'center',
+
+    marginTop: 6,
   },
+
   secondaryButtonText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
   },
 });

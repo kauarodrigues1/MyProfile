@@ -13,19 +13,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ProfileCard } from '@/components/ProfileCard';
 import { ThemedText } from '@/components/themed-text';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useTheme } from '@/hooks/use-theme';
+import { useThemeContext } from '@/context/ThemeContext';
 import { EditProfileScreen } from '@/screens/EditProfileScreen';
 import { getUser } from '@/services/storageService';
-import { Theme } from '@/types/theme';
 import { User } from '@/types/user';
 
-const ACCENT_COLOR = '#FF6B00';
-
 export function ProfileScreen() {
-  const colors = useTheme();
-  const scheme = useColorScheme();
-  const theme: Theme = scheme === 'dark' ? 'dark' : 'light';
+  const { colors } = useThemeContext();
 
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,7 +32,6 @@ export function ProfileScreen() {
 
     try {
       const storedUser = await getUser();
-
       setUser(storedUser);
     } catch {
       setError('Não foi possível carregar o perfil.');
@@ -60,7 +53,8 @@ export function ProfileScreen() {
     if (isLoading) {
       return (
         <View style={styles.centered}>
-          <ActivityIndicator color={ACCENT_COLOR} />
+          <ActivityIndicator color={colors.primary} />
+
           <ThemedText type="small" themeColor="textSecondary">
             Carregando perfil...
           </ThemedText>
@@ -71,13 +65,25 @@ export function ProfileScreen() {
     if (error) {
       return (
         <View style={styles.centered}>
-          <ThemedText style={styles.centerText}>{error}</ThemedText>
+          <ThemedText style={styles.centerText}>
+            {error}
+          </ThemedText>
+
           <Pressable
-            style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
+            style={({ pressed }) => [
+              styles.primaryButton,
+              {
+                backgroundColor: colors.primary,
+                opacity: pressed ? 0.85 : 1,
+              },
+            ]}
             onPress={loadUser}
             accessibilityRole="button"
-            accessibilityLabel="Tentar carregar o perfil novamente">
-            <Text style={styles.primaryButtonText}>Tentar novamente</Text>
+            accessibilityLabel="Tentar carregar o perfil novamente"
+          >
+            <Text style={styles.primaryButtonText}>
+              Tentar novamente
+            </Text>
           </Pressable>
         </View>
       );
@@ -86,8 +92,15 @@ export function ProfileScreen() {
     if (!user) {
       return (
         <View style={styles.centered}>
-          <ThemedText style={styles.centerText}>Nenhum perfil encontrado.</ThemedText>
-          <ThemedText type="small" themeColor="textSecondary" style={styles.centerText}>
+          <ThemedText style={styles.centerText}>
+            Nenhum perfil encontrado.
+          </ThemedText>
+
+          <ThemedText
+            type="small"
+            themeColor="textSecondary"
+            style={styles.centerText}
+          >
             Faça o cadastro para visualizar seus dados aqui.
           </ThemedText>
         </View>
@@ -96,32 +109,68 @@ export function ProfileScreen() {
 
     return (
       <View style={styles.profileContent}>
-        <ThemedText type="subtitle">Perfil</ThemedText>
+        <View>
+          <ThemedText style={styles.title}>
+            Perfil
+          </ThemedText>
 
-        <ProfileCard user={user} theme={theme} />
+          <ThemedText
+            type="small"
+            themeColor="textSecondary"
+            style={styles.subtitle}
+          >
+            Visualize e gerencie suas informações pessoais.
+          </ThemedText>
+        </View>
+
+        <ProfileCard
+          user={user}
+        />
 
         <Pressable
-          style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
+          style={({ pressed }) => [
+            styles.primaryButton,
+            {
+              backgroundColor: colors.primary,
+              opacity: pressed ? 0.85 : 1,
+            },
+          ]}
           onPress={() => setIsEditing(true)}
           accessibilityRole="button"
-          accessibilityLabel="Editar perfil">
-          <Text style={styles.primaryButtonText}>Editar perfil</Text>
+          accessibilityLabel="Editar perfil"
+        >
+          <Text style={styles.primaryButtonText}>
+            Editar perfil
+          </Text>
         </Pressable>
       </View>
     );
   };
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
-      <ScrollView contentContainerStyle={styles.contentContainer}>
-        <View style={styles.content}>{renderContent()}</View>
+    <SafeAreaView
+      style={[
+        styles.safeArea,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
+      <ScrollView
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.content}>
+          {renderContent()}
+        </View>
       </ScrollView>
 
       {user ? (
         <Modal
           visible={isEditing}
           animationType="slide"
-          onRequestClose={() => setIsEditing(false)}>
+          onRequestClose={() => setIsEditing(false)}
+        >
           <EditProfileScreen
             user={user}
             onCancel={() => setIsEditing(false)}
@@ -137,44 +186,58 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
+
   contentContainer: {
     flexGrow: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     paddingHorizontal: Spacing.four,
-    paddingTop: Spacing.four,
+    paddingTop: Spacing.five,
     paddingBottom: BottomTabInset + Spacing.four,
   },
+
   content: {
     flex: 1,
     maxWidth: MaxContentWidth,
   },
+
   profileContent: {
     gap: Spacing.three,
   },
+
+  title: {
+    fontSize: 30,
+    fontWeight: '800',
+    letterSpacing: -0.8,
+  },
+
+  subtitle: {
+    marginTop: 5,
+    fontSize: 14,
+  },
+
   centered: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.three,
   },
+
   centerText: {
     textAlign: 'center',
   },
-  pressed: {
-    opacity: 0.85,
-  },
+
   primaryButton: {
-    backgroundColor: ACCENT_COLOR,
     height: 52,
-    borderRadius: Spacing.three,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'stretch',
     paddingHorizontal: Spacing.four,
   },
+
   primaryButtonText: {
-    color: '#ffffff',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
   },

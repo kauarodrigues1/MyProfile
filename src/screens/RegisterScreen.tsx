@@ -2,19 +2,22 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
-  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
+  View,
 } from 'react-native';
 
 import { CustomInput } from '@/components/CustomInput';
+import { PrimaryButton } from '@/components/PrimaryButton';
+import { useThemeContext } from '@/context/ThemeContext';
 
 export function RegisterScreen() {
+  const { colors } = useThemeContext();
+
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -26,6 +29,7 @@ export function RegisterScreen() {
 
   const validate = () => {
     let isValid = true;
+
     const newErrors: { [key: string]: string } = {};
 
     if (!name.trim()) {
@@ -70,122 +74,178 @@ export function RegisterScreen() {
   };
 
   const handleRegister = async () => {
-  if (!validate()) {
-    return;
-  }
+    if (!validate()) {
+      return;
+    }
 
-  setIsLoading(true);
+    setIsLoading(true);
 
-  try {
-    const newUser = {
-      id: Date.now().toString(),
-      name: name.trim(),
-      username: username.trim(),
-      email: email.trim(),
-      password,
-      phone: '',
-      city: '',
-      bio: '',
-    };
+    try {
+      const newUser = {
+        id: Date.now().toString(),
+        name: name.trim(),
+        username: username.trim(),
+        email: email.trim(),
+        password,
+        phone: '',
+        city: '',
+        bio: '',
+      };
 
-    await AsyncStorage.setItem(
-      '@myprofile:user',
-      JSON.stringify(newUser)
-    );
+      await AsyncStorage.setItem(
+        '@myprofile:user',
+        JSON.stringify(newUser)
+      );
 
-    console.log('Cadastro realizado com sucesso:', newUser);
+      console.log(
+        'Cadastro realizado com sucesso:',
+        newUser
+      );
 
-    // Vai diretamente para o MyProfile
-    router.replace('/(tabs)');
-  } catch (error) {
-    console.error('Erro ao cadastrar:', error);
+      router.replace('/(tabs)');
+    } catch (error) {
+      console.error('Erro ao cadastrar:', error);
 
-    Alert.alert(
-      'Erro',
-      'Não foi possível realizar o cadastro. Tente novamente.'
-    );
-  } finally {
-    setIsLoading(false);
-  }
-};
+      Alert.alert(
+        'Erro',
+        'Não foi possível realizar o cadastro. Tente novamente.'
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <KeyboardAvoidingView
-      style={styles.keyboard}
+      style={[
+        styles.keyboard,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView
-        contentContainerStyle={styles.container}
+        contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.title}>Crie sua conta</Text>
+        <View style={styles.container}>
+          {/* Cabeçalho */}
+          <View style={styles.header}>
+            <Text
+              style={[
+                styles.title,
+                {
+                  color: colors.text,
+                },
+              ]}
+            >
+              Criar sua conta
+            </Text>
 
-        <CustomInput
-          label="Nome completo"
-          placeholder="Digite seu nome"
-          value={name}
-          onChangeText={setName}
-          error={errors.name}
-        />
+            <Text
+              style={[
+                styles.subtitle,
+                {
+                  color: colors.textSecondary,
+                },
+              ]}
+            >
+              Preencha seus dados para começar
+            </Text>
+          </View>
 
-        <CustomInput
-          label="Nome de usuário"
-          placeholder="Escolha um username"
-          value={username}
-          onChangeText={setUsername}
-          error={errors.username}
-          autoCapitalize="none"
-        />
+          {/* Formulário */}
+          <View style={styles.form}>
+            <CustomInput
+              label="Nome completo"
+              placeholder="Digite seu nome"
+              value={name}
+              onChangeText={setName}
+              error={errors.name}
+              editable={!isLoading}
+            />
 
-        <CustomInput
-          label="E-mail"
-          placeholder="Digite seu e-mail"
-          value={email}
-          onChangeText={setEmail}
-          error={errors.email}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
+            <CustomInput
+              label="Nome de usuário"
+              placeholder="Escolha um username"
+              value={username}
+              onChangeText={setUsername}
+              error={errors.username}
+              autoCapitalize="none"
+              editable={!isLoading}
+            />
 
-        <CustomInput
-          label="Senha"
-          placeholder="Crie uma senha"
-          value={password}
-          onChangeText={setPassword}
-          error={errors.password}
-          secureTextEntry
-        />
+            <CustomInput
+              label="E-mail"
+              placeholder="Digite seu e-mail"
+              value={email}
+              onChangeText={setEmail}
+              error={errors.email}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              editable={!isLoading}
+            />
 
-        <CustomInput
-          label="Confirme a senha"
-          placeholder="Repita sua senha"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          error={errors.confirmPassword}
-          secureTextEntry
-        />
+            <CustomInput
+              label="Senha"
+              placeholder="Crie uma senha"
+              value={password}
+              onChangeText={setPassword}
+              error={errors.password}
+              secureTextEntry
+              editable={!isLoading}
+            />
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleRegister}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator color="#FFFFFF" />
-          ) : (
-            <Text style={styles.buttonText}>Cadastrar</Text>
-          )}
-        </TouchableOpacity>
+            <CustomInput
+              label="Confirme a senha"
+              placeholder="Repita sua senha"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              error={errors.confirmPassword}
+              secureTextEntry
+              editable={!isLoading}
+            />
 
-        <TouchableOpacity
-          style={styles.linkButton}
-          onPress={() => router.replace('/(tabs)')}
-          disabled={isLoading}
-        >
-          <Text style={styles.linkText}>
-            Já tem cadastro? Voltar
-          </Text>
-        </TouchableOpacity>
+            <PrimaryButton
+              title="Cadastrar"
+              onPress={handleRegister}
+              loading={isLoading}
+              disabled={isLoading}
+            />
+          </View>
+
+          {/* Voltar para login */}
+          <View style={styles.footer}>
+            <Text
+              style={[
+                styles.footerText,
+                {
+                  color: colors.textSecondary,
+                },
+              ]}
+            >
+              Já possui uma conta?
+            </Text>
+
+            <Text
+              style={[
+                styles.loginButton,
+                {
+                  color: colors.primary,
+                },
+              ]}
+              onPress={
+                isLoading
+                  ? undefined
+                  : () => router.replace('/')
+              }
+            >
+              Entrar
+            </Text>
+          </View>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -196,42 +256,53 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  container: {
+  scrollContent: {
     flexGrow: 1,
-    padding: 24,
-    backgroundColor: '#f5f5f5',
     justifyContent: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 40,
+  },
+
+  container: {
+    width: '100%',
+    maxWidth: 480,
+    alignSelf: 'center',
+  },
+
+  header: {
+    alignItems: 'center',
+    marginBottom: 32,
   },
 
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 24,
+    fontSize: 32,
+    fontWeight: '800',
+    letterSpacing: -0.8,
+    marginBottom: 8,
     textAlign: 'center',
-    color: '#333333',
   },
 
-  button: {
-    backgroundColor: '#FF6B00',
-    padding: 16,
-    borderRadius: 8,
+  subtitle: {
+    fontSize: 15,
+    textAlign: 'center',
+  },
+
+  form: {
+    gap: 4,
+  },
+
+  footer: {
     alignItems: 'center',
-    marginTop: 16,
+    marginTop: 28,
   },
 
-  buttonText: {
-    color: '#FFFFFF',
+  footerText: {
+    fontSize: 14,
+    marginBottom: 8,
+  },
+
+  loginButton: {
     fontSize: 16,
-    fontWeight: 'bold',
-  },
-
-  linkButton: {
-    marginTop: 24,
-    alignItems: 'center',
-  },
-
-  linkText: {
-    color: '#FF6B00',
-    fontSize: 16,
+    fontWeight: '700',
   },
 });

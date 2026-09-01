@@ -4,37 +4,37 @@ import { Platform } from 'react-native';
 
 export const Colors = {
   light: {
-    background: '#F7F8FA',
+    background: '#F5F7FF',
     backgroundElement: '#FFFFFF',
-    backgroundSelected: '#F1F2F4',
+    backgroundSelected: '#EEF0FF',
 
-    text: '#171717',
-    textSecondary: '#6B7280',
-    textMuted: '#9CA3AF',
+    text: '#151827',
+    textSecondary: '#687086',
+    textMuted: '#9AA2B5',
 
-    primary: '#FF6B00',
-    primaryPressed: '#E85F00',
+    primary: '#5B5FEF',
+    primaryPressed: '#484CCF',
 
-    border: '#E5E7EB',
-    error: '#DC2626',
-    success: '#16A34A',
+    border: '#E1E5F2',
+    error: '#DC3B52',
+    success: '#20A06B',
   },
 
   dark: {
-    background: '#0F1115',
-    backgroundElement: '#181B21',
-    backgroundSelected: '#22262E',
+    background: '#0B0F1A',
+    backgroundElement: '#151B2B',
+    backgroundSelected: '#202840',
 
-    text: '#F5F5F5',
-    textSecondary: '#A1A1AA',
-    textMuted: '#71717A',
+    text: '#F8F9FF',
+    textSecondary: '#A7AEC2',
+    textMuted: '#6F7890',
 
-    primary: '#FF7A00',
-    primaryPressed: '#E66D00',
+    primary: '#7C82FF',
+    primaryPressed: '#656BE8',
 
-    border: '#2A2E37',
-    error: '#F87171',
-    success: '#4ADE80',
+    border: '#293149',
+    error: '#FF7185',
+    success: '#42D39A',
   },
 } as const;
 

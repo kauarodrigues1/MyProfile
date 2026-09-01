@@ -1,6 +1,6 @@
-import React from 'react';
+import { useState } from 'react';
 import {
-  SafeAreaView,
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,55 +13,105 @@ import { ThemeSwitch } from '@/components/ThemeSwitch';
 import { useThemeContext } from '@/context/ThemeContext';
 
 export default function HomeScreen() {
-  const { colors, theme } = useThemeContext();
+  const { colors } = useThemeContext();
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    if (!name.trim() || !email.trim()) {
+      Alert.alert(
+        'Atenção',
+        'Preencha seu nome e e-mail.'
+      );
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      // A lógica de persistência do perfil pode continuar
+      // sendo integrada pelo responsável por essa funcionalidade.
+      Alert.alert(
+        'Sucesso',
+        'Alterações salvas com sucesso.'
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
-    <SafeAreaView
+    <ScrollView
       style={[
-        styles.safeArea,
-        { backgroundColor: colors.background },
+        styles.scrollView,
+        {
+          backgroundColor: colors.background,
+        },
       ]}
+      contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}
     >
-      <ScrollView
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
+      <View style={styles.container}>
+
+        {/* =====================================================
+            HEADER
+        ===================================================== */}
+
         <View style={styles.header}>
-          <View
-            style={[
-              styles.logo,
-              { backgroundColor: colors.primary },
-            ]}
-          >
-            <Text style={styles.logoText}>M</Text>
-          </View>
-
-          <View style={styles.headerText}>
-            <Text
+          <View style={styles.brand}>
+            <View
               style={[
-                styles.title,
-                { color: colors.text },
+                styles.logo,
+                {
+                  backgroundColor: colors.primary,
+                },
               ]}
             >
-              MyProfile
-            </Text>
+              <Text style={styles.logoText}>M</Text>
+            </View>
 
-            <Text
-              style={[
-                styles.subtitle,
-                { color: colors.textSecondary },
-              ]}
-            >
-              Seu perfil, do seu jeito.
-            </Text>
+            <View>
+              <Text
+                style={[
+                  styles.brandTitle,
+                  {
+                    color: colors.text,
+                  },
+                ]}
+              >
+                MyProfile
+              </Text>
+
+              <Text
+                style={[
+                  styles.brandSubtitle,
+                  {
+                    color: colors.textSecondary,
+                  },
+                ]}
+              >
+                Seu perfil, do seu jeito.
+              </Text>
+            </View>
           </View>
+
+          {/* Botão Sol / Lua */}
+          <ThemeSwitch />
         </View>
+
+        {/* =====================================================
+            BOAS-VINDAS
+        ===================================================== */}
 
         <View style={styles.welcome}>
           <Text
             style={[
-              styles.welcomeTitle,
-              { color: colors.text },
+              styles.title,
+              {
+                color: colors.text,
+              },
             ]}
           >
             Bem-vindo 👋
@@ -69,14 +119,19 @@ export default function HomeScreen() {
 
           <Text
             style={[
-              styles.welcomeText,
-              { color: colors.textSecondary },
+              styles.subtitle,
+              {
+                color: colors.textSecondary,
+              },
             ]}
           >
-            Gerencie seus dados e personalize
-            sua experiência.
+            Gerencie seus dados e personalize sua experiência.
           </Text>
         </View>
+
+        {/* =====================================================
+            CARD DO PERFIL
+        ===================================================== */}
 
         <View
           style={[
@@ -87,159 +142,234 @@ export default function HomeScreen() {
             },
           ]}
         >
-          <Text
-            style={[
-              styles.cardTitle,
-              { color: colors.text },
-            ]}
-          >
-            Prévia do perfil
-          </Text>
+          {/* Cabeçalho do card */}
 
-          <Text
-            style={[
-              styles.cardDescription,
-              { color: colors.textSecondary },
-            ]}
-          >
-            Este componente será utilizado
-            posteriormente na tela de perfil.
-          </Text>
+          <View style={styles.cardHeader}>
+            <View
+              style={[
+                styles.cardIcon,
+                {
+                  backgroundColor: colors.backgroundSelected,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.cardIconText,
+                  {
+                    color: colors.primary,
+                  },
+                ]}
+              >
+                👤
+              </Text>
+            </View>
 
-          <CustomInput
-            label="Nome"
-            placeholder="Digite seu nome"
-          />
+            <View style={styles.cardHeaderText}>
+              <Text
+                style={[
+                  styles.cardTitle,
+                  {
+                    color: colors.text,
+                  },
+                ]}
+              >
+                Prévia do perfil
+              </Text>
 
-          <CustomInput
-            label="E-mail"
-            placeholder="seuemail@email.com"
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
+              <Text
+                style={[
+                  styles.cardDescription,
+                  {
+                    color: colors.textSecondary,
+                  },
+                ]}
+              >
+                Este componente será utilizado posteriormente
+                na tela de perfil.
+              </Text>
+            </View>
+          </View>
 
-          <PrimaryButton
-            title="Salvar alterações"
-            onPress={() => {}}
-          />
+          {/* Formulário */}
+
+          <View style={styles.form}>
+
+            <CustomInput
+              label="Nome"
+              placeholder="Digite seu nome"
+              value={name}
+              onChangeText={setName}
+              editable={!isSaving}
+            />
+
+            <CustomInput
+              label="E-mail"
+              placeholder="seuemail@email.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              editable={!isSaving}
+            />
+
+            <PrimaryButton
+              title="Salvar alterações"
+              onPress={handleSave}
+              loading={isSaving}
+              disabled={isSaving}
+            />
+
+          </View>
         </View>
 
-        <View style={styles.themeSection}>
-          <Text
-            style={[
-              styles.sectionTitle,
-              { color: colors.text },
-            ]}
-          >
-            Personalização
-          </Text>
-
-          <Text
-            style={[
-              styles.sectionDescription,
-              { color: colors.textSecondary },
-            ]}
-          >
-            Tema atual: {theme === 'dark' ? 'Dark' : 'Light'}
-          </Text>
-
-          <ThemeSwitch />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  scrollView: {
     flex: 1,
   },
 
-  content: {
-    padding: 24,
-    gap: 24,
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 40,
   },
 
+  container: {
+    width: '100%',
+    maxWidth: 1200,
+    alignSelf: 'center',
+    paddingHorizontal: 32,
+  },
+
+  /* =====================================================
+     HEADER
+     ===================================================== */
+
   header: {
+    width: '100%',
+    minHeight: 90,
+
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
-    marginTop: 16,
+    justifyContent: 'space-between',
+
+    paddingVertical: 18,
+  },
+
+  brand: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 
   logo: {
-    width: 52,
-    height: 52,
-    borderRadius: 16,
+    width: 48,
+    height: 48,
+
+    borderRadius: 14,
+
     alignItems: 'center',
     justifyContent: 'center',
+
+    marginRight: 14,
   },
 
   logoText: {
     color: '#FFFFFF',
-    fontSize: 24,
+    fontSize: 25,
     fontWeight: '800',
   },
 
-  headerText: {
-    flex: 1,
-  },
-
-  title: {
-    fontSize: 26,
+  brandTitle: {
+    fontSize: 25,
     fontWeight: '800',
+    letterSpacing: -0.6,
   },
 
-  subtitle: {
-    fontSize: 14,
+  brandSubtitle: {
+    fontSize: 13,
     marginTop: 2,
   },
 
+  /* =====================================================
+     WELCOME
+     ===================================================== */
+
   welcome: {
-    marginTop: 12,
-    gap: 6,
+    marginTop: 24,
+    marginBottom: 28,
   },
 
-  welcomeTitle: {
-    fontSize: 28,
+  title: {
+    fontSize: 30,
     fontWeight: '800',
+    letterSpacing: -0.8,
   },
 
-  welcomeText: {
+  subtitle: {
     fontSize: 15,
-    lineHeight: 22,
+    marginTop: 7,
   },
+
+  /* =====================================================
+     CARD
+     ===================================================== */
 
   card: {
-    borderRadius: 20,
+    width: '100%',
+
     borderWidth: 1,
-    padding: 20,
+    borderRadius: 20,
+
+    padding: 24,
+  },
+
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+
+    marginBottom: 24,
+  },
+
+  cardIcon: {
+    width: 48,
+    height: 48,
+
+    borderRadius: 16,
+
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    marginRight: 14,
+  },
+
+  cardIconText: {
+    fontSize: 21,
+  },
+
+  cardHeaderText: {
+    flex: 1,
   },
 
   cardTitle: {
     fontSize: 19,
     fontWeight: '700',
-    marginBottom: 6,
   },
 
   cardDescription: {
     fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 20,
+    marginTop: 4,
   },
 
-  themeSection: {
-    gap: 8,
-    marginBottom: 20,
-  },
+  /* =====================================================
+     FORM
+     ===================================================== */
 
-  sectionTitle: {
-    fontSize: 19,
-    fontWeight: '700',
-  },
-
-  sectionDescription: {
-    fontSize: 14,
-    marginBottom: 8,
+  form: {
+    width: '100%',
+    gap: 4,
   },
 });
