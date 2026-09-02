@@ -26,7 +26,7 @@ O projeto foi desenvolvido de forma colaborativa por uma equipe de 5 integrantes
 
 ### 📝 Cadastro
 
-<img width="942" height="776" alt="Tela de Cadastro" src="https://github.com/user-attachments/assets/3bb9494d-dcf9-4a8a-b2ac-248010cfcb1c" />
+<img width="785" height="876" alt="Tela de Criar Conta" src="https://github.com/user-attachments/assets/4b781aeb-da51-4687-8530-22da800baa75" />
 
 ### 👤 MyProfile
 
