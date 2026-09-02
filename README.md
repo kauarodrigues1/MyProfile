@@ -2,6 +2,14 @@
 
 Aplicação mobile desenvolvida em React Native com Expo para gerenciamento e personalização de perfil de usuário.
 
+## 👥 Integrantes
+Leonardo Luiz Jardim Queijo - RM 559842
+Kauã Rodrigues de Souza - RM 559335
+Felipe Santos Marceli - RM560456
+Enzo Galhardo - RM561001
+Kauan Diogo - RM560727
+<img width="942" height="776" alt="image" src="https://github.com/user-attachments/assets/4a090fda-4378-402e-be47-f5ebcfe238dc" />
+
 ## 📱 Sobre o projeto
 
 O MyProfile é uma aplicação desenvolvida para permitir que usuários gerenciem suas informações pessoais e personalizem sua experiência dentro do aplicativo.
