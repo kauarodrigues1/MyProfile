@@ -146,6 +146,12 @@ Revisão de responsividade.
 Integração final.
 Documentação do projeto.
 
+Prints da Aplicação
+
+Login:
+<img width="908" height="821" alt="image" src="https://github.com/user-attachments/assets/cea3262f-bdd6-4a06-80a5-10bab56f190b" />
+
+
 🧪 Validação
 
 Para verificar se o projeto está compilando corretamente:
